@@ -12,5 +12,6 @@ class Chatting(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     content = db.Column(db.Text(), nullable=False)
     type = db.Column(db.Integer, nullable=False)
+    
     lost_id = db.Column(db.Integer, db.ForeignKey('lost.id', ondelete='CASCADE'))
     lost = db.relationship('Lost', backref=db.backref('chatting_set'))
