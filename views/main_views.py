@@ -39,10 +39,6 @@ def create_lost():
     db.session.add(lost)
     db.session.commit()
 
-    lost = Lost.query.all()
-    for losta in lost:
-        print(losta.bicycle)
-
     return { "success": True}
 
 @bp.get('/chattings')
@@ -51,15 +47,18 @@ def index():
     res = json.dumps(chatting_list, cls=AlchemyEncoder)
     return res
 
-@bp.post('/chattings')
-def create():
+@bp.post('/chattings/<int:lost_id>')
+def create(lost_id):
+    lost = Lost.query.get_or_404(lost_id)
     res = request.json
     content = res['content']
     type = res['type']
+
     #lost_id = 1
     print(res)
-    chatting =Chatting(content=content, type=type)
-    db.session.add(Chatting)
+    chatting =Chatting(content=content, type=type, lost_id=lost_id)
+    
+    db.session.add(chatting)
     db.session.commit() 
     
     return { "success": True}
