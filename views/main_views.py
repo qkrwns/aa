@@ -12,7 +12,7 @@ def index_lost():
     lost_list = Lost.query.order_by(Lost.lost_date.desc()).all()
     res = json.dumps(lost_list, cls=AlchemyEncoder)
     return res
-    
+
 @bp.get('/losts/<int:lost_id>')
 def detail(lost_id):
     lost=Lost.query.get(lost_id)
@@ -22,7 +22,15 @@ def detail(lost_id):
 @bp.get('/losts/<int:lost_id>/chattings')
 def detail_chattings(lost_id):
     lost=Lost.query.get(lost_id)
-    chatting_list = Chatting.query.all()
+    chatting_list = Chatting.query.filter_by(lost_id=lost_id).all()
+    isMaster = True
+    args = request.args
+    password = args['password']
+    if lost.password != password:
+        isMaster =  False
+    if isMaster == False:
+        for chatting in chatting_list:
+            chatting.type = 3-chatting.type
     res = json.dumps(chatting_list, cls=AlchemyEncoder)
     return res
 
@@ -34,7 +42,8 @@ def create_lost():
     content = res['content']
     lost_date = res['lost_date']
     lost_time = datetime.strptime(lost_date, '%Y-%m-%dT%H:%M')
-    lost = Lost(bicycle=bicycle, location=location, content=content, lost_date=lost_time)
+    password = res['password']
+    lost = Lost(bicycle=bicycle, location=location, content=content, lost_date=lost_time, password=password)
 
     db.session.add(lost)
     db.session.commit()
@@ -52,7 +61,11 @@ def create(lost_id):
     lost = Lost.query.get_or_404(lost_id)
     res = request.json
     content = res['content']
-    type = res['type']
+    password = res['password']
+    if lost.password == password:
+        type = 1
+    else:
+        type = 2
 
     #lost_id = 1
     print(res)
