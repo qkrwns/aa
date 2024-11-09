@@ -9,7 +9,7 @@ bp = Blueprint('main', __name__, url_prefix='/')
 
 @bp.get('/losts')
 def index_lost():
-    lost_list = Lost.query.order_by(Lost.lost_date.desc()).all()
+    lost_list = Lost.query.order_by(Lost.id.desc()).all()
     res = json.dumps(lost_list, cls=AlchemyEncoder)
     return res
 
@@ -43,7 +43,9 @@ def create_lost():
     lost_date = res['lost_date']
     lost_time = datetime.strptime(lost_date, '%Y-%m-%dT%H:%M')
     password = res['password']
-    lost = Lost(bicycle=bicycle, location=location, content=content, lost_date=lost_time, password=password)
+    lat = res['lat']
+    lng = res['lng']
+    lost = Lost(bicycle=bicycle, location=location, content=content, lost_date=lost_time, password=password, lat=lat, lng=lng)
 
     db.session.add(lost)
     db.session.commit()

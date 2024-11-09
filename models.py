@@ -8,8 +8,9 @@ class Lost(db.Model):
     lost_date = db.Column(db.DateTime(), nullable=False)
     location = db.Column(db.String(200), nullable = False)
     content = db.Column(db.Text(), nullable=False)
-    password = db.Column(db.String(), nullable=True)
-
+    password = db.Column(db.String(), nullable=False)
+    lat = db.Column(db.Double(), nullable=False)
+    lng = db.Column(db.Double(), nullable=False)
 
 class Chatting(db.Model):
     id = db.Column(db.Integer, primary_key=True)
